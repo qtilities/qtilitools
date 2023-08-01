@@ -1,0 +1,82 @@
+#!/bin/sh
+
+#===============================================================================
+# BSD 3-Clause License
+# 
+# Copyright (c) 2018, Alf Gaida <agaida@siduction.org> (as lxqt-transupdate)
+# Copyright (c) 2023, Andrea Zanellato <redtid3@gmail.com>
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+# 
+# 3. Neither the name of the copyright holder nor the names of its
+#    contributors may be used to endorse or promote products derived from
+#    this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#===============================================================================
+# qtls-translate
+#
+# Update translation files.
+#===============================================================================
+function usage
+{
+  printf "\nUse: lxqt-transupdate [source directory]\n"
+  exit 0
+}
+
+function lxqt_transupdate
+{
+  if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then usage; fi
+
+  # Test for supported Qt version
+  local qtVersion_=$(qmake -query QT_VERSION|cut -d'.' -f1)
+  local qVersions_=(5 6)
+
+  if echo "${qVersions_[@]}" | grep -qw "$qtVersion_"; then supported_=1; fi
+
+  if [ -z "$supported_" ]; then
+    printf "\nError: Qt%s is not supported. (Supported versions are: " "$qtVersion_"
+    printf "%s" "${qVersions_[0]}"
+    printf ", %s" "${qVersions_[@]:1}"
+    printf ')\n\n'
+    exit 1
+  fi
+
+  local sourcedir_=
+  local templates_=$(find . -name \*.ts | grep -v '_')
+
+  if [ -d "$1" ]; then sourcedir_="$1"; fi
+
+  for i in $templates_; do
+    local transdir_=$(dirname $i)
+    if [ "$sourcedir_" == "" ]; then sourcedir_=$(dirname $transdir_); fi
+    local cmdUpdateTemplate="lupdate $sourcedir_ -ts $i -locations absolute -no-obsolete"
+    local cmdUpdateLanguage="lupdate $sourcedir_ -ts $transdir_/*_*.ts -locations absolute -no-obsolete"
+
+    printf "\n== Template Update ==\n\n"
+    printf "Running command \"%s\"...\n" "$cmdUpdateTemplate"
+    $cmdUpdateTemplate
+    printf "\n== Languages Update ==\n\n"
+    printf "Running command \"%s\"...\n" "$cmdUpdateLanguage"
+    $cmdUpdateLanguage
+    printf "\n"
+  done
+}
+lxqt_transupdate "${@}"

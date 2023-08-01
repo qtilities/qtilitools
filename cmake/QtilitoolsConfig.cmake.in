@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+set_and_check(Qtilitools_CMAKE_MODULE_PATH "@PACKAGE_QTILITOOLS_CMAKE_PATH@/modules")
+check_required_components(Qtilitools)
+list(APPEND CMAKE_MODULE_PATH "${Qtilitools_CMAKE_MODULE_PATH}")

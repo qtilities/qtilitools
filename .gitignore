@@ -1,0 +1,4 @@
+*build*/
+*.diff
+*.patch
+*.user
