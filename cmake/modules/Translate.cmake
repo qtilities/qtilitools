@@ -1,4 +1,4 @@
-#===============================================================================
+#=======================================================================================================
 # BSD 3-Clause License
 #
 # Copyright (c) 2014, Luís Pereira <luis.artur.pereira@gmail.com> (as LXQtTranslateTs.cmake.in)
@@ -28,20 +28,19 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#=======================================================================================================
-# function qtls_translate(qmFiles              OUTPUT: Compiled ".qm" translation files.
-#                         SOURCES <sources>
-#                        [TEMPLATE]            translations base name (lower case project name)
-#                        [TRANSLATION_DIR]     ".ts" source directory path, relative to the CMakeList.txt.
-#                        [UPDATE_TRANSLATIONS] wether if update translations or compile only
-#                        [UPDATE_OPTIONS]      options to pass to lupdate. Requires UPDATE_TRANSLATIONS.
-#                        [INSTALL_DIR]         ".qm" install directory
-# )
-#    TEMPLATE            Optional, Default: "${PROJECT_ID}".
-#    TRANSLATION_DIR     Optional, Default: "translations".
-#    UPDATE_TRANSLATIONS Optional, Default: OFF.
-#    UPDATE_OPTIONS      Optional, Default: ""
-#    INSTALL_DIR         Optional, If not present no installation is performed.
+#
+# function qtls_translate
+#
+# Output:
+#    qmFiles             Compiled ".qm" translation file names list.
+#
+# Input:
+#    SOURCES             Mandatory, the list of source files.
+#    TEMPLATE            Optional, translations base name (lower case project name). Default: "${PROJECT_ID}".
+#    TRANSLATION_DIR     Optional, ".ts" source directory path, relative to the CMakeList.txt. Default: "translations".
+#    UPDATE_TRANSLATIONS Optional, wether if update translations or compile only. Default: OFF.
+#    UPDATE_OPTIONS      Optional, options to pass to lupdate. Requires UPDATE_TRANSLATIONS. Default: ""
+#    INSTALL_DIR         Optional, ".qm" install directory. If not present no installation is performed.
 #=======================================================================================================
 find_package(Qt${QT_VERSION_MAJOR}LinguistTools REQUIRED)
 
@@ -98,7 +97,7 @@ endfunction()
 #=======================================================================================================
 # Original Author: Alexander Sokolov <sokoloff.a@gmail.com>
 #
-# function(qtls_translate_desktop _RESULT)
+# function qtls_translate_desktop
 #
 # Output:
 #    _RESULT            The generated .desktop file(s).
@@ -108,7 +107,6 @@ endfunction()
 #    DESKTOP_FILE_STEM  Optional, filename, without `.desktop` extension for the output file(s).
 #    TRANSLATION_DIR    Optional, path to the directory with the .ts files, relative to the CMakeList.txt.
 #                       Default: "translations".
-#
 #=======================================================================================================
 find_package(Perl REQUIRED)
 

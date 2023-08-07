@@ -75,7 +75,7 @@ if (UNIX AND NOT APPLE)
     unset(${DESKTOP_FILE_IN_})
 
     # Application icon might be optional if using only freedesktop theme icons
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${ICON_FILE_}")
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/application.icon")
         list(APPEND PROJECT_RESOURCES ${ICON_FILE_})
         set(PROJECT_ICON_FILE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/icons/hicolor/scalable/apps")
         configure_file(${ICON_FILE_}
@@ -112,7 +112,7 @@ if (UNIX AND NOT APPLE)
         DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
     )
 endif()
-if(EXISTS "resources/icons/application.icon")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/application.icon")
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ICON_FILE_NAME}"
         DESTINATION "${PROJECT_ICON_FILE_PATH}"
     )

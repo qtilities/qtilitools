@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(Qtilitools
-    VERSION 0.1.0
+    VERSION 0.1.1
 )
 string(TOLOWER ${PROJECT_NAME} PROJECT_ID)
 

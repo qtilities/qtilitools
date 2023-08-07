@@ -1,4 +1,4 @@
-#===============================================================================
+#=======================================================================================================
 # BSD 3-Clause License
 #
 # Copyright (c) 2023, Andrea Zanellato <redtid3@gmail.com>
@@ -28,6 +28,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #=======================================================================================================
+# AppStream.cmake
+#
 # Converts a domain string to a compatible AppStream ID
 #
 # E.G.: org.7-zip.7zip become org._7_zip._7zip
