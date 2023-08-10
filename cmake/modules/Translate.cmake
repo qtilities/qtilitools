@@ -44,15 +44,25 @@
 #=======================================================================================================
 find_package(Qt${QT_VERSION_MAJOR}LinguistTools REQUIRED)
 
+# TODO: TEMPLATE as multiValueArgs? Otherwise other translations shouldn't be available as subfolder of others
+#       because recursion.
 function(qtls_translate qmFiles)
     set(oneValueArgs
+        UPDATE_TRANSLATIONS
         TEMPLATE
         TRANSLATION_DIR
-        UPDATE_TRANSLATIONS
         INSTALL_DIR
     )
     set(multiValueArgs SOURCES UPDATE_OPTIONS)
     cmake_parse_arguments(TR "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if (NOT DEFINED TR_UPDATE_TRANSLATIONS)
+        set(TR_UPDATE_TRANSLATIONS OFF)
+    endif()
+
+    if (NOT DEFINED TR_UPDATE_OPTIONS)
+        set(TR_UPDATE_OPTIONS "")
+    endif()
 
     if(NOT DEFINED TR_TEMPLATE)
         set(TR_TEMPLATE "${PROJECT_ID}")
@@ -68,15 +78,12 @@ function(qtls_translate qmFiles)
         set(templateFile "${TR_TRANSLATION_DIR}/${TR_TEMPLATE}.ts")
     endif ()
 
-    if (NOT DEFINED TR_UPDATE_TRANSLATIONS)
-        set(TR_UPDATE_TRANSLATIONS OFF)
-    endif()
-
-    if (NOT DEFINED TR_UPDATE_OPTIONS)
-        set(TR_UPDATE_OPTIONS "")
-    endif()
-
     if (TR_UPDATE_TRANSLATIONS)
+        qt_create_translation(QMS
+            ${TR_SOURCES}
+            ${templateFile}
+            OPTIONS ${TR_UPDATE_OPTIONS}
+        )
         qt_create_translation(QM
             ${TR_SOURCES}
             ${tsFiles}
@@ -86,10 +93,7 @@ function(qtls_translate qmFiles)
     qt_add_translation(QM ${tsFiles})
 
     if(DEFINED TR_INSTALL_DIR)
-        install(FILES ${QM}
-            DESTINATION "${TR_INSTALL_DIR}"
-            COMPONENT "Runtime"
-        )
+        install(FILES ${QM} DESTINATION "${TR_INSTALL_DIR}")
     endif()
 
     set(${qmFiles} ${QM} PARENT_SCOPE)
