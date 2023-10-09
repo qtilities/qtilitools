@@ -1,4 +1,4 @@
-#===============================================================================
+#=======================================================================================================
 # BSD 3-Clause License
 #
 # Copyright (c) 2023, Andrea Zanellato <redtid3@gmail.com>
@@ -63,7 +63,7 @@ if (UNIX AND NOT APPLE)
     set(ICON_FILE_       "resources/icons/application.icon")
 
     set(PROJECT_APPDATA_FILE_NAME "${PROJECT_APPSTREAM_ID}.appdata.xml")
-    set(DESKTOP_FILE_IN "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ID}.desktop.in")
+    set(DESKTOP_FILE_IN "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_APPSTREAM_ID}.desktop.in")
 
     list(APPEND PROJECT_RESOURCES ${APPDATA_FILE_IN_})
     list(APPEND PROJECT_RESOURCES ${DESKTOP_FILE_IN_})
@@ -100,8 +100,8 @@ if (UNIX AND NOT APPLE)
         TRANSLATION_DIR     "${PROJECT_TRANSLATIONS_DIR}"
     )
     unset(DESKTOP_FILE_IN)
-    file(GLOB PROJECT_TRANSLATION_SOURCES "resources/translations/*")
-    source_group("Translation Sources" FILES ${PROJECT_TRANSLATION_SOURCES})
+    file(GLOB PROJECT_TRANSLATION_SOURCES "${PROJECT_TRANSLATIONS_DIR}/*")
+    source_group("Translations" FILES ${PROJECT_TRANSLATION_SOURCES})
 #=======================================================================================================
 # Install
 #=======================================================================================================
@@ -118,4 +118,4 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/resources/icons/application.icon")
     )
 endif()
 
-source_group("Resource Files" FILES ${PROJECT_RESOURCES})
+source_group("Resources" FILES ${PROJECT_RESOURCES})
