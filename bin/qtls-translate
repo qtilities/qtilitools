@@ -47,7 +47,7 @@ function lxqt_transupdate
 
   # Test for supported Qt version
   local qtVersion_=$(qmake -query QT_VERSION|cut -d'.' -f1)
-  local qVersions_=(5 6)
+  local qVersions_="5 6"
 
   if echo "${qVersions_[@]}" | grep -qw "$qtVersion_"; then supported_=1; fi
 
