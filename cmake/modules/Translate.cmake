@@ -2,7 +2,7 @@
 # BSD 3-Clause License
 #
 # Copyright (c) 2014, Luís Pereira <luis.artur.pereira@gmail.com> (as LXQtTranslateTs.cmake.in)
-# Copyright (c) 2023, Andrea Zanellato <redtid3@gmail.com>
+# Copyright (c) 2023-2024, Andrea Zanellato <redtid3@gmail.com>
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -118,7 +118,6 @@ function(qtls_translate_desktop _RESULT)
     # Parse arguments
     set(oneValueArgs TRANSLATION_DIR DESKTOP_FILE_STEM)
     set(multiValueArgs SOURCES)
-
     cmake_parse_arguments(_ARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # Check for unknown arguments
@@ -130,6 +129,7 @@ function(qtls_translate_desktop _RESULT)
         )
     endif()
 
+    # Check for mandatory SOURCES argument
     if (NOT DEFINED _ARGS_SOURCES)
         set(${_RESULT} "" PARENT_SCOPE)
         return()
@@ -137,44 +137,41 @@ function(qtls_translate_desktop _RESULT)
         set(_sources ${_ARGS_SOURCES})
     endif()
 
+    # Check for translation directory and make it an absolute path
     if (NOT DEFINED _ARGS_TRANSLATION_DIR)
         set(_translationDir "translations")
     else()
         set(_translationDir ${_ARGS_TRANSLATION_DIR})
     endif()
+    get_filename_component(_translationDir ${_translationDir} ABSOLUTE)
 
-    get_filename_component (_translationDir ${_translationDir} ABSOLUTE)
-
+    # Files involved are:
+    # - YAML desktop translations: `app-name_cc.desktop.yaml` (cc is country code)
+    # - Desktop file templates:
+    #   - `app-name.desktop.in`           when not using FreeDesktop AppStream
+    #   - `tld.domain.AppName.desktop.in` when using FreeDesktop AppStream
     foreach (_inFile ${_sources})
         # File in full path string, E.g.: "/path/to/file_stem.desktop.in"
-        get_filename_component(_inFile   ${_inFile} ABSOLUTE)
-
-        # File in name without extension, E.g.: "file_stem"
-        get_filename_component(_fileName ${_inFile} NAME_WE)
-
-        # File in long extension, e.g.: ".desktop.in"
-        get_filename_component(_fileExt  ${_inFile} EXT)
-
-        # File output extension, e.g.: "desktop"
-        string(REPLACE ".in" "" _fileExt ${_fileExt})
-        string(REGEX REPLACE "^\\.([^.].*)$" "\\1" _fileExt ${_fileExt})
+        get_filename_component(_inFile ${_inFile} ABSOLUTE)
 
         if(_ARGS_DESKTOP_FILE_STEM)
-            set(_outFile "${CMAKE_CURRENT_BINARY_DIR}/${_ARGS_DESKTOP_FILE_STEM}.${_fileExt}")
+            # When using AppStream DESKTOP_FILE_STEM is same as PROJECT_APPSTREAM_ID (e.g.: `tld.domain.AppName`)...
+            set(_outFile "${CMAKE_CURRENT_BINARY_DIR}/${_ARGS_DESKTOP_FILE_STEM}.desktop")
         else()
-            set(_outFile "${CMAKE_CURRENT_BINARY_DIR}/${_fileName}.${_fileExt}")
+            # ...otherwise same as PROJECT_ID (e.g.: `app-name`), which is always used for translations files,
+            # which is passed directly in the command below.
+            set(_outFile "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ID}.desktop")
         endif()
         get_filename_component(_outFileName ${_outFile} NAME)
 
         add_custom_command(OUTPUT ${_outFile}
             COMMAND ${PERL_EXECUTABLE} "${Qtilitools_CMAKE_MODULE_PATH}/TranslateDesktop.pl"
                 "${_inFile}"
-                "${_fileName}"
-                "${_translationDir}/${_fileName}[_.]*${_fileExt}.yaml" >> "${_outFile}"
+                "${PROJECT_ID}"
+                "${_translationDir}/${PROJECT_ID}[_.]*desktop.yaml" >> "${_outFile}"
             VERBATIM
             COMMENT "Generating ${_outFileName}"
         )
-
         set(__result ${__result} ${_outFile})
     endforeach()
 
